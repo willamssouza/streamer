@@ -50,26 +50,16 @@ func (p Process) getHLSFlags() string {
 func (p Process) Spawn(path, URI string) *exec.Cmd {
 	os.MkdirAll(path, os.ModePerm)
 	processCommands := []string{
-		"-y",
-		"-fflags",
-		"nobuffer",
+		"-thread_queue_size",
+		"32768",
 		"-rtsp_transport",
 		"tcp",
 		"-i",
 		URI,
-		"-f",
-		"lavfi",
-		"-i",
-		"anullsrc=channel_layout=stereo:sample_rate=44100",
-		"-vsync",
-		"0",
-		"-copyts",
-		"-vcodec",
-		"copy",
-		"-movflags",
-		"frag_keyframe+empty_moov",
+		"-preset",
+		"superfast",
 	}
-	if (!p.audio) {
+	if !p.audio {
 		processCommands = append(processCommands, "-an")
 	}
 	processCommands = append(processCommands,
@@ -83,6 +73,8 @@ func (p Process) Spawn(path, URI string) *exec.Cmd {
 		"1",
 		"-hls_list_size",
 		"3",
+		"-hls_delete_threshold",
+		"2",
 		"-hls_segment_filename",
 		fmt.Sprintf("%s/%%d.ts", path),
 		fmt.Sprintf("%s/index.m3u8", path),
