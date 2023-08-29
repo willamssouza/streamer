@@ -61,9 +61,13 @@ func (p Process) Spawn(path, URI string) *exec.Cmd {
 		"lavfi",
 		"-i",
 		"anullsrc=channel_layout=stereo:sample_rate=44100",
+		"-vsync",
+		"0",
 		"-copyts",
 		"-vcodec",
 		"copy",
+		"-movflags",
+		"frag_keyframe+empty_moov",
 	}
 	if !p.audio {
 		processCommands = append(processCommands, "-an")
